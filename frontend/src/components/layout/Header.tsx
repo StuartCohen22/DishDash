@@ -1,77 +1,87 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 
 export function Header() {
   const { user, logout, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     logout();
     navigate('/login');
   };
 
-  return (
-    <header className="bg-white shadow-sm">
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex items-center">
-            <Link to="/" className="text-2xl font-bold text-primary-600">
-              DishDash
-            </Link>
-            {isAuthenticated && (
-              <div className="hidden sm:ml-10 sm:flex sm:space-x-8">
-                <Link
-                  to="/"
-                  className="text-gray-700 hover:text-primary-600 px-3 py-2 text-sm font-medium"
-                >
-                  Dashboard
-                </Link>
-                <Link
-                  to="/recipes"
-                  className="text-gray-700 hover:text-primary-600 px-3 py-2 text-sm font-medium"
-                >
-                  Recipes
-                </Link>
-                <Link
-                  to="/meal-plans"
-                  className="text-gray-700 hover:text-primary-600 px-3 py-2 text-sm font-medium"
-                >
-                  Meal Plans
-                </Link>
-                <Link
-                  to="/shopping-list"
-                  className="text-gray-700 hover:text-primary-600 px-3 py-2 text-sm font-medium"
-                >
-                  Shopping List
-                </Link>
-              </div>
-            )}
-          </div>
+  const isActive = (path: string) => location.pathname === path;
 
-          <div className="flex items-center">
-            {isAuthenticated ? (
-              <div className="flex items-center space-x-4">
-                <span className="text-sm text-gray-600">
-                  Hello, {user?.name}
-                </span>
-                <button
-                  onClick={handleLogout}
-                  className="btn-secondary text-sm"
-                >
-                  Sign out
-                </button>
-              </div>
-            ) : (
-              <div className="flex items-center space-x-4">
-                <Link to="/login" className="btn-secondary text-sm">
-                  Sign in
-                </Link>
-                <Link to="/register" className="btn-primary text-sm">
-                  Get started
-                </Link>
-              </div>
-            )}
+  const navLinks = [
+    { path: '/recipes', label: 'Recipes' },
+    { path: '/meal-plans', label: 'Planner' },
+    { path: '/shopping-list', label: 'Shopping' },
+  ];
+
+  return (
+    <header className="sticky top-0 z-40 border-b border-cookbook-200/60 bg-cookbook-50/80 backdrop-blur">
+      <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-10">
+        {/* Logo */}
+        <div className="flex items-center gap-3">
+          <Link to="/" className="flex items-center gap-3">
+            <div className="h-9 w-9 rounded-xl bg-cookbook-900 text-cookbook-50 grid place-items-center text-sm font-bold">
+              DD
+            </div>
+            <div className="leading-tight">
+              <div className="font-serif text-lg font-semibold text-cookbook-900">Dish Dash</div>
+              <div className="text-xs text-cookbook-500">Recipes &bull; Planner &bull; Shopping</div>
+            </div>
+          </Link>
+        </div>
+
+        {/* Center Navigation */}
+        {isAuthenticated && (
+          <div className="hidden md:flex items-center gap-1">
+            {navLinks.map((link) => (
+              <Link
+                key={link.path}
+                to={link.path}
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                  isActive(link.path)
+                    ? 'bg-cookbook-100 text-cookbook-900'
+                    : 'text-cookbook-600 hover:text-cookbook-900 hover:bg-cookbook-100/50'
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
           </div>
+        )}
+
+        {/* Right side */}
+        <div className="flex items-center gap-3">
+          {isAuthenticated ? (
+            <>
+              <span className="hidden sm:block text-sm text-cookbook-600">{user?.name}</span>
+              <button
+                onClick={handleLogout}
+                className="rounded-xl border border-cookbook-200/70 bg-cookbook-50 px-3 py-2 text-sm text-cookbook-700 hover:bg-cookbook-100 transition-colors"
+              >
+                Sign out
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                to="/login"
+                className="text-sm text-cookbook-600 hover:text-cookbook-900 px-3 py-2"
+              >
+                Sign in
+              </Link>
+              <Link
+                to="/register"
+                className="btn-primary text-sm"
+              >
+                Get started
+              </Link>
+            </>
+          )}
         </div>
       </nav>
     </header>

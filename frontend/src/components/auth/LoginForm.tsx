@@ -49,77 +49,92 @@ export function LoginForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h1 className="text-center text-3xl font-bold text-primary-600">
-            DishDash
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-cookbook-50 to-cookbook-100 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full">
+        {/* Logo and Header */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center gap-3 mb-6">
+            <div className="h-12 w-12 rounded-xl bg-cookbook-900 text-cookbook-50 grid place-items-center text-lg font-bold">
+              DD
+            </div>
+            <span className="font-serif text-2xl font-bold text-cookbook-900">Dish Dash</span>
+          </div>
+          <h1 className="font-serif text-3xl font-bold text-cookbook-900">
+            Welcome back
           </h1>
-          <h2 className="mt-6 text-center text-2xl font-bold text-gray-900">
-            Sign in to your account
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Or{' '}
-            <Link
-              to="/register"
-              className="font-medium text-primary-600 hover:text-primary-500"
-            >
-              create a new account
-            </Link>
+          <p className="mt-2 text-cookbook-600">
+            Sign in to access your recipes
           </p>
         </div>
 
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-              {error}
-            </div>
-          )}
+        {/* Form Card */}
+        <div className="bg-white rounded-2xl border border-cookbook-200/70 p-8">
+          <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+                {error}
+              </div>
+            )}
 
-          <div className="space-y-4">
-            <div>
-              <label htmlFor="email" className="label">
-                Email address
-              </label>
-              <input
-                id="email"
-                type="email"
-                autoComplete="email"
-                className={`input ${errors.email ? 'input-error' : ''}`}
-                {...register('email')}
-              />
-              {errors.email && (
-                <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
-              )}
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="email" className="label">
+                  Email address
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  autoComplete="email"
+                  placeholder="you@example.com"
+                  className={`input ${errors.email ? 'input-error' : ''}`}
+                  {...register('email')}
+                />
+                {errors.email && (
+                  <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+                )}
+              </div>
+
+              <div>
+                <label htmlFor="password" className="label">
+                  Password
+                </label>
+                <input
+                  id="password"
+                  type="password"
+                  autoComplete="current-password"
+                  placeholder="Enter your password"
+                  className={`input ${errors.password ? 'input-error' : ''}`}
+                  {...register('password')}
+                />
+                {errors.password && (
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.password.message}
+                  </p>
+                )}
+              </div>
             </div>
 
-            <div>
-              <label htmlFor="password" className="label">
-                Password
-              </label>
-              <input
-                id="password"
-                type="password"
-                autoComplete="current-password"
-                className={`input ${errors.password ? 'input-error' : ''}`}
-                {...register('password')}
-              />
-              {errors.password && (
-                <p className="mt-1 text-sm text-red-600">
-                  {errors.password.message}
-                </p>
-              )}
-            </div>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full btn-primary py-3 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSubmitting ? 'Signing in...' : 'Sign in'}
+            </button>
+          </form>
+
+          <div className="mt-6 text-center">
+            <p className="text-sm text-cookbook-600">
+              Don't have an account?{' '}
+              <Link
+                to="/register"
+                className="font-medium text-accent-600 hover:text-accent-700"
+              >
+                Create one
+              </Link>
+            </p>
           </div>
-
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full btn-primary py-3 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isSubmitting ? 'Signing in...' : 'Sign in'}
-          </button>
-        </form>
+        </div>
       </div>
     </div>
   );
