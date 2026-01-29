@@ -5,131 +5,116 @@ export function HomePage() {
   const { user } = useAuth();
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-10">
       {/* Welcome Section */}
-      <div className="bg-white rounded-xl shadow-md p-8">
-        <h1 className="text-3xl font-bold text-gray-900">
+      <header className="text-center py-8">
+        <h1 className="font-serif text-4xl font-bold text-cookbook-900">
           Welcome back, {user?.name}!
         </h1>
-        <p className="mt-2 text-gray-600">
+        <p className="mt-3 text-lg text-cookbook-600 max-w-2xl mx-auto">
           Plan your meals, organize recipes, and create shopping lists all in one place.
         </p>
-      </div>
+      </header>
 
       {/* Quick Actions Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Recipes Card */}
         <Link
           to="/recipes"
-          className="card hover:shadow-lg transition-shadow duration-200"
+          className="group p-6 bg-white rounded-2xl border border-cookbook-200/70 hover:border-cookbook-300 transition-all duration-200"
         >
-          <div className="flex items-center space-x-4">
-            <div className="p-3 bg-primary-100 rounded-lg">
-              <svg
-                className="w-8 h-8 text-primary-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-                />
-              </svg>
-            </div>
-            <div>
-              <h2 className="text-xl font-semibold text-gray-900">Recipes</h2>
-              <p className="text-gray-600">Browse and add recipes</p>
-            </div>
+          <div className="w-12 h-12 rounded-xl bg-sage-100 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
+            <span className="text-2xl">📖</span>
           </div>
+          <h2 className="font-serif text-xl font-semibold text-cookbook-900">Recipes</h2>
+          <p className="mt-1 text-cookbook-600">Browse and add your favorite recipes</p>
         </Link>
 
         {/* Meal Plans Card */}
         <Link
           to="/meal-plans"
-          className="card hover:shadow-lg transition-shadow duration-200"
+          className="group p-6 bg-white rounded-2xl border border-cookbook-200/70 hover:border-cookbook-300 transition-all duration-200"
         >
-          <div className="flex items-center space-x-4">
-            <div className="p-3 bg-accent-100 rounded-lg">
-              <svg
-                className="w-8 h-8 text-accent-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                />
-              </svg>
-            </div>
-            <div>
-              <h2 className="text-xl font-semibold text-gray-900">Meal Plans</h2>
-              <p className="text-gray-600">Plan your weekly meals</p>
-            </div>
+          <div className="w-12 h-12 rounded-xl bg-accent-100 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
+            <span className="text-2xl">📅</span>
           </div>
+          <h2 className="font-serif text-xl font-semibold text-cookbook-900">Planner</h2>
+          <p className="mt-1 text-cookbook-600">Plan your weekly meals with ease</p>
         </Link>
 
         {/* Shopping List Card */}
         <Link
           to="/shopping-list"
-          className="card hover:shadow-lg transition-shadow duration-200"
+          className="group p-6 bg-white rounded-2xl border border-cookbook-200/70 hover:border-cookbook-300 transition-all duration-200"
         >
-          <div className="flex items-center space-x-4">
-            <div className="p-3 bg-blue-100 rounded-lg">
-              <svg
-                className="w-8 h-8 text-blue-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
-                />
-              </svg>
-            </div>
-            <div>
-              <h2 className="text-xl font-semibold text-gray-900">
-                Shopping List
-              </h2>
-              <p className="text-gray-600">View your shopping list</p>
-            </div>
+          <div className="w-12 h-12 rounded-xl bg-cookbook-100 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
+            <span className="text-2xl">🛒</span>
           </div>
+          <h2 className="font-serif text-xl font-semibold text-cookbook-900">Shopping</h2>
+          <p className="mt-1 text-cookbook-600">Generate and manage shopping lists</p>
         </Link>
       </div>
 
       {/* Getting Started Section */}
-      <div className="card">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">
+      <div className="bg-white rounded-2xl border border-cookbook-200/70 p-8">
+        <h2 className="font-serif text-2xl font-semibold text-cookbook-900 mb-6">
           Getting Started
         </h2>
-        <ol className="list-decimal list-inside space-y-3 text-gray-600">
-          <li>
-            <Link to="/recipes/new" className="text-primary-600 hover:underline">
-              Add your favorite recipes
-            </Link>{' '}
-            with ingredients and instructions
-          </li>
-          <li>
-            <Link to="/meal-plans/new" className="text-primary-600 hover:underline">
-              Create a meal plan
-            </Link>{' '}
-            for the week
-          </li>
-          <li>
-            Generate a shopping list from your meal plan
-          </li>
-          <li>
-            Check off items as you shop
-          </li>
-        </ol>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="flex gap-4">
+            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-cookbook-800 text-cookbook-50 flex items-center justify-center text-sm font-medium">
+              1
+            </div>
+            <div>
+              <h3 className="font-medium text-cookbook-900">Add your recipes</h3>
+              <p className="text-cookbook-600 text-sm mt-1">
+                <Link to="/recipes/new" className="text-accent-600 hover:underline">
+                  Start adding recipes
+                </Link>{' '}
+                with ingredients and instructions.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex gap-4">
+            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-cookbook-800 text-cookbook-50 flex items-center justify-center text-sm font-medium">
+              2
+            </div>
+            <div>
+              <h3 className="font-medium text-cookbook-900">Create a meal plan</h3>
+              <p className="text-cookbook-600 text-sm mt-1">
+                <Link to="/meal-plans/new" className="text-accent-600 hover:underline">
+                  Plan your week
+                </Link>{' '}
+                by assigning recipes to each day.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex gap-4">
+            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-cookbook-800 text-cookbook-50 flex items-center justify-center text-sm font-medium">
+              3
+            </div>
+            <div>
+              <h3 className="font-medium text-cookbook-900">Generate shopping list</h3>
+              <p className="text-cookbook-600 text-sm mt-1">
+                Automatically create a shopping list from your meal plan.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex gap-4">
+            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-cookbook-800 text-cookbook-50 flex items-center justify-center text-sm font-medium">
+              4
+            </div>
+            <div>
+              <h3 className="font-medium text-cookbook-900">Shop with confidence</h3>
+              <p className="text-cookbook-600 text-sm mt-1">
+                Check off items as you shop and never forget an ingredient.
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

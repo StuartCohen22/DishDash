@@ -1,10 +1,13 @@
 import { Routes, Route } from 'react-router-dom';
-import { MainLayout } from '@/components/layout/MainLayout';
+import { AppShell } from '@/components/layout/AppShell';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { LoginPage } from '@/pages/LoginPage';
 import { RegisterPage } from '@/pages/RegisterPage';
 import { HomePage } from '@/pages/HomePage';
 import { RecipesPage } from '@/pages/RecipesPage';
+import { RecipeCreatePage } from '@/pages/RecipeCreatePage';
+import { RecipeDetailPage } from '@/pages/RecipeDetailPage';
+import { RecipeEditPage } from '@/pages/RecipeEditPage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 import { DemoPage } from '@/pages/DemoPage';
 
@@ -20,17 +23,16 @@ function App() {
 
       {/* Protected routes with layout */}
       <Route element={<ProtectedRoute />}>
-        <Route element={<MainLayout />}>
+        <Route element={<AppShell />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/recipes" element={<RecipesPage />} />
-          {/* TODO: Add more routes as they are implemented */}
-          <Route path="/recipes/new" element={<PlaceholderPage title="Create Recipe" />} />
-          <Route path="/recipes/:id" element={<PlaceholderPage title="Recipe Detail" />} />
-          <Route path="/recipes/:id/edit" element={<PlaceholderPage title="Edit Recipe" />} />
-          <Route path="/meal-plans" element={<PlaceholderPage title="Meal Plans" />} />
-          <Route path="/meal-plans/new" element={<PlaceholderPage title="Create Meal Plan" />} />
-          <Route path="/meal-plans/:id" element={<PlaceholderPage title="Meal Plan Detail" />} />
-          <Route path="/shopping-list" element={<PlaceholderPage title="Shopping List" />} />
+          <Route path="/recipes/new" element={<RecipeCreatePage />} />
+          <Route path="/recipes/:id" element={<RecipeDetailPage />} />
+          <Route path="/recipes/:id/edit" element={<RecipeEditPage />} />
+          <Route path="/meal-plans" element={<PlaceholderPage title="Meal Plans" description="Plan your weekly meals and generate shopping lists." />} />
+          <Route path="/meal-plans/new" element={<PlaceholderPage title="Create Meal Plan" description="Start a new meal plan for the week." />} />
+          <Route path="/meal-plans/:id" element={<PlaceholderPage title="Meal Plan Detail" description="View and manage your meal plan." />} />
+          <Route path="/shopping-list" element={<PlaceholderPage title="Shopping List" description="Your generated shopping lists will appear here." />} />
         </Route>
       </Route>
 
@@ -41,13 +43,12 @@ function App() {
 }
 
 // Placeholder component for routes not yet implemented
-function PlaceholderPage({ title }: { title: string }) {
+function PlaceholderPage({ title, description }: { title: string; description: string }) {
   return (
     <div className="card text-center py-12">
-      <h1 className="text-2xl font-bold text-gray-900">{title}</h1>
-      <p className="mt-2 text-gray-600">
-        This page is coming soon. Check back later!
-      </p>
+      <h1 className="font-serif text-2xl font-bold text-cookbook-900">{title}</h1>
+      <p className="mt-2 text-cookbook-600">{description}</p>
+      <p className="mt-4 text-sm text-cookbook-400">Coming soon!</p>
     </div>
   );
 }

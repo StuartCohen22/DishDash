@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Recipe, RecipeCategory } from '@/types';
 import { recipeService } from '@/services/recipe.service';
+import { RecipeCard } from '@/components/recipes/RecipeCard';
+import { Chip } from '@/components/common/Chip';
 
 export function RecipesPage() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
@@ -29,128 +31,92 @@ export function RecipesPage() {
     fetchRecipes();
   }, [category, search]);
 
-  const getCategoryColor = (cat: RecipeCategory) => {
-    const colors: Record<RecipeCategory, string> = {
-      [RecipeCategory.BREAKFAST]: 'bg-yellow-100 text-yellow-800',
-      [RecipeCategory.LUNCH]: 'bg-green-100 text-green-800',
-      [RecipeCategory.DINNER]: 'bg-blue-100 text-blue-800',
-      [RecipeCategory.SNACK]: 'bg-purple-100 text-purple-800',
-      [RecipeCategory.DESSERT]: 'bg-pink-100 text-pink-800',
-      [RecipeCategory.BEVERAGE]: 'bg-cyan-100 text-cyan-800',
-    };
-    return colors[cat] || 'bg-gray-100 text-gray-800';
-  };
-
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Recipes</h1>
-          <p className="text-gray-600">Manage your recipe collection</p>
+    <div className="space-y-8">
+      {/* Page Header */}
+      <header className="text-center">
+        <h1 className="font-serif text-4xl font-bold text-cookbook-900">
+          My Recipe Collection
+        </h1>
+        <p className="mt-2 text-cookbook-600">
+          {recipes.length} {recipes.length === 1 ? 'recipe' : 'recipes'} in your cookbook
+        </p>
+      </header>
+
+      {/* Search and Add Button */}
+      <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
+        <div className="relative flex-1 max-w-md w-full">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <svg className="h-5 w-5 text-cookbook-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+          <input
+            type="text"
+            placeholder="Search recipes..."
+            className="input pl-10"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
         </div>
-        <Link to="/recipes/new" className="btn-primary">
-          Add Recipe
+
+        <Link to="/recipes/new" className="btn-primary whitespace-nowrap">
+          + Add Recipe
         </Link>
       </div>
 
-      {/* Filters */}
-      <div className="card">
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="flex-1">
-            <input
-              type="text"
-              placeholder="Search recipes..."
-              className="input"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
-          <div className="sm:w-48">
-            <select
-              className="input"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-            >
-              <option value="">All Categories</option>
-              {Object.values(RecipeCategory).map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat.charAt(0).toUpperCase() + cat.slice(1)}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
+      {/* Category Chips */}
+      <div className="flex flex-wrap gap-2">
+        <Chip
+          label="All"
+          active={!category}
+          onClick={() => setCategory('')}
+        />
+        {Object.values(RecipeCategory).map((cat) => (
+          <Chip
+            key={cat}
+            label={cat.charAt(0).toUpperCase() + cat.slice(1)}
+            active={category === cat}
+            onClick={() => setCategory(cat)}
+          />
+        ))}
       </div>
 
       {/* Recipe Grid */}
       {isLoading ? (
-        <div className="flex justify-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        <div className="flex justify-center py-16">
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-cookbook-800"></div>
         </div>
       ) : error ? (
-        <div className="text-center py-12">
+        <div className="text-center py-16">
           <p className="text-red-600">{error}</p>
         </div>
       ) : recipes.length === 0 ? (
-        <div className="text-center py-12">
-          <svg
-            className="mx-auto h-12 w-12 text-gray-400"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-            />
-          </svg>
-          <h3 className="mt-2 text-sm font-medium text-gray-900">No recipes</h3>
-          <p className="mt-1 text-sm text-gray-500">
-            Get started by creating a new recipe.
-          </p>
-          <div className="mt-6">
-            <Link to="/recipes/new" className="btn-primary">
-              Add Recipe
-            </Link>
+        <div className="text-center py-16">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-cookbook-100 flex items-center justify-center">
+            <svg className="h-8 w-8 text-cookbook-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+              />
+            </svg>
           </div>
+          <h3 className="font-serif text-xl font-semibold text-cookbook-900 mb-2">
+            No recipes yet
+          </h3>
+          <p className="text-cookbook-600 mb-6 max-w-sm mx-auto">
+            Start building your cookbook. Add your first recipe to get started.
+          </p>
+          <Link to="/recipes/new" className="btn-primary">
+            Add Your First Recipe
+          </Link>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {recipes.map((recipe) => (
-            <Link
-              key={recipe.id}
-              to={`/recipes/${recipe.id}`}
-              className="card hover:shadow-lg transition-shadow duration-200"
-            >
-              <div className="space-y-3">
-                <div className="flex justify-between items-start">
-                  <h3 className="text-lg font-semibold text-gray-900 line-clamp-1">
-                    {recipe.name}
-                  </h3>
-                  <span
-                    className={`px-2 py-1 rounded-full text-xs font-medium ${getCategoryColor(
-                      recipe.category
-                    )}`}
-                  >
-                    {recipe.category}
-                  </span>
-                </div>
-                {recipe.description && (
-                  <p className="text-gray-600 text-sm line-clamp-2">
-                    {recipe.description}
-                  </p>
-                )}
-                <div className="flex items-center justify-between text-sm text-gray-500">
-                  <span>
-                    {recipe.prep_time_minutes + recipe.cook_time_minutes} min
-                  </span>
-                  <span>{recipe.servings} servings</span>
-                </div>
-              </div>
-            </Link>
+            <RecipeCard key={recipe.id} recipe={recipe} />
           ))}
         </div>
       )}

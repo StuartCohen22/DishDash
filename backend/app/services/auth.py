@@ -4,26 +4,21 @@ from datetime import datetime, timedelta
 from typing import Any
 from uuid import UUID
 
+import bcrypt
 from jose import JWTError, jwt
-from passlib.context import CryptContext
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import settings
 from app.models.user import User
 
-# Password hashing context
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
 # bcrypt has a 72-byte limit on passwords
 MAX_PASSWORD_BYTES = 72
 
 
-def _truncate_password(password: str) -> str:
+def _truncate_password(password: str) -> bytes:
     """Truncate password to 72 bytes for bcrypt compatibility."""
-    # Encode to bytes, truncate, decode back (handling multi-byte chars)
-    password_bytes = password.encode("utf-8")[:MAX_PASSWORD_BYTES]
-    return password_bytes.decode("utf-8", errors="ignore")
+    return password.encode("utf-8")[:MAX_PASSWORD_BYTES]
 
 
 class AuthService:
@@ -32,12 +27,17 @@ class AuthService:
     @staticmethod
     def verify_password(plain_password: str, hashed_password: str) -> bool:
         """Verify a password against its hash."""
-        return pwd_context.verify(_truncate_password(plain_password), hashed_password)
+        password_bytes = _truncate_password(plain_password)
+        hashed_bytes = hashed_password.encode("utf-8")
+        return bcrypt.checkpw(password_bytes, hashed_bytes)
 
     @staticmethod
     def get_password_hash(password: str) -> str:
         """Hash a password using bcrypt."""
-        return pwd_context.hash(_truncate_password(password))
+        password_bytes = _truncate_password(password)
+        salt = bcrypt.gensalt()
+        hashed = bcrypt.hashpw(password_bytes, salt)
+        return hashed.decode("utf-8")
 
     @staticmethod
     def create_access_token(
@@ -105,7 +105,9 @@ class AuthService:
         Returns:
             User object or None if not found
         """
-        result = await db.execute(select(User).where(User.email == email))
+        result = await db.execute(
+            select(User).where(func.lower(User.email) == func.lower(email))
+        )
         return result.scalar_one_or_none()
 
     @staticmethod
@@ -147,7 +149,7 @@ class AuthService:
         """
         hashed_password = AuthService.get_password_hash(password)
         user = User(
-            email=email,
+            email=email.lower().strip(),
             password_hash=hashed_password,
             name=name,
         )

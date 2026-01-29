@@ -74,54 +74,56 @@ const DEMO_RECIPES: Recipe[] = [
   },
 ];
 
-const getCategoryColor = (cat: RecipeCategory) => {
-  const colors: Record<RecipeCategory, string> = {
-    [RecipeCategory.BREAKFAST]: 'bg-yellow-100 text-yellow-800',
-    [RecipeCategory.LUNCH]: 'bg-green-100 text-green-800',
-    [RecipeCategory.DINNER]: 'bg-blue-100 text-blue-800',
-    [RecipeCategory.SNACK]: 'bg-purple-100 text-purple-800',
-    [RecipeCategory.DESSERT]: 'bg-pink-100 text-pink-800',
-    [RecipeCategory.BEVERAGE]: 'bg-cyan-100 text-cyan-800',
-  };
-  return colors[cat] || 'bg-gray-100 text-gray-800';
+// Category-specific gradient backgrounds
+const categoryGradients: Record<string, string> = {
+  breakfast: 'from-amber-100/60 to-orange-100/40',
+  lunch: 'from-emerald-100/60 to-teal-100/40',
+  dinner: 'from-indigo-100/60 to-purple-100/40',
+  snack: 'from-rose-100/60 to-pink-100/40',
+  dessert: 'from-fuchsia-100/60 to-pink-100/40',
+  beverage: 'from-cyan-100/60 to-sky-100/40',
 };
 
 export function DemoPage() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-b from-cookbook-50 to-cookbook-100">
       {/* Demo Header */}
-      <header className="bg-white shadow-sm">
-        <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <span className="text-2xl font-bold text-primary-600">DishDash</span>
-              <span className="ml-3 px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded">
-                DEMO MODE
-              </span>
+      <header className="sticky top-0 z-40 border-b border-cookbook-200/60 bg-cookbook-50/80 backdrop-blur">
+        <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-10">
+          <div className="flex items-center gap-3">
+            <div className="h-9 w-9 rounded-xl bg-cookbook-900 text-cookbook-50 grid place-items-center text-sm font-bold">
+              DD
             </div>
-            <div className="flex items-center space-x-4">
-              <Link to="/login" className="btn-secondary text-sm">
-                Sign in
-              </Link>
-              <Link to="/register" className="btn-primary text-sm">
-                Get started
-              </Link>
+            <div className="leading-tight">
+              <div className="font-serif text-lg font-semibold text-cookbook-900">Dish Dash</div>
+              <div className="text-xs text-cookbook-500">Demo Preview</div>
             </div>
+            <span className="ml-2 px-2 py-0.5 bg-accent-100 text-accent-700 text-xs font-medium rounded-full">
+              DEMO
+            </span>
+          </div>
+          <div className="flex items-center gap-3">
+            <Link to="/login" className="text-sm text-cookbook-600 hover:text-cookbook-900 px-3 py-2">
+              Sign in
+            </Link>
+            <Link to="/register" className="btn-primary text-sm">
+              Get started
+            </Link>
           </div>
         </nav>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-10 py-10">
         {/* Demo Banner */}
-        <div className="bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl shadow-lg p-8 mb-8 text-white">
-          <h1 className="text-3xl font-bold">Welcome to DishDash!</h1>
-          <p className="mt-2 text-primary-100">
-            This is a demo preview of the app. Sign up to create your own recipes and meal plans.
+        <div className="bg-cookbook-800 rounded-2xl p-8 mb-10 text-cookbook-50">
+          <h1 className="font-serif text-3xl font-bold">Welcome to Dish Dash!</h1>
+          <p className="mt-2 text-cookbook-300 max-w-2xl">
+            This is a demo preview of the app. Sign up to create your own recipes, plan meals, and generate shopping lists.
           </p>
-          <div className="mt-4 flex space-x-4">
+          <div className="mt-6 flex flex-wrap gap-3">
             <Link
               to="/register"
-              className="bg-white text-primary-600 px-4 py-2 rounded-lg font-medium hover:bg-primary-50"
+              className="bg-cookbook-50 text-cookbook-900 px-4 py-2 rounded-lg font-medium hover:bg-white transition-colors"
             >
               Create Free Account
             </Link>
@@ -129,7 +131,7 @@ export function DemoPage() {
               href="http://localhost:8000/docs"
               target="_blank"
               rel="noopener noreferrer"
-              className="border border-white text-white px-4 py-2 rounded-lg font-medium hover:bg-primary-400"
+              className="border border-cookbook-600 text-cookbook-200 px-4 py-2 rounded-lg font-medium hover:bg-cookbook-700 transition-colors"
             >
               View API Docs
             </a>
@@ -137,105 +139,95 @@ export function DemoPage() {
         </div>
 
         {/* Quick Actions Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="card">
-            <div className="flex items-center space-x-4">
-              <div className="p-3 bg-primary-100 rounded-lg">
-                <svg className="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                </svg>
-              </div>
-              <div>
-                <h2 className="text-xl font-semibold text-gray-900">Recipes</h2>
-                <p className="text-gray-600">{DEMO_RECIPES.length} sample recipes</p>
-              </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+          <div className="p-6 bg-white rounded-2xl border border-cookbook-200/70">
+            <div className="w-12 h-12 rounded-xl bg-sage-100 flex items-center justify-center mb-4">
+              <span className="text-2xl">📖</span>
             </div>
+            <h2 className="font-serif text-xl font-semibold text-cookbook-900">Recipes</h2>
+            <p className="mt-1 text-cookbook-600">{DEMO_RECIPES.length} sample recipes</p>
           </div>
 
-          <div className="card">
-            <div className="flex items-center space-x-4">
-              <div className="p-3 bg-accent-100 rounded-lg">
-                <svg className="w-8 h-8 text-accent-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <div>
-                <h2 className="text-xl font-semibold text-gray-900">Meal Plans</h2>
-                <p className="text-gray-600">Plan your weekly meals</p>
-              </div>
+          <div className="p-6 bg-white rounded-2xl border border-cookbook-200/70">
+            <div className="w-12 h-12 rounded-xl bg-accent-100 flex items-center justify-center mb-4">
+              <span className="text-2xl">📅</span>
             </div>
+            <h2 className="font-serif text-xl font-semibold text-cookbook-900">Meal Plans</h2>
+            <p className="mt-1 text-cookbook-600">Plan your weekly meals</p>
           </div>
 
-          <div className="card">
-            <div className="flex items-center space-x-4">
-              <div className="p-3 bg-blue-100 rounded-lg">
-                <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-                </svg>
-              </div>
-              <div>
-                <h2 className="text-xl font-semibold text-gray-900">Shopping List</h2>
-                <p className="text-gray-600">Auto-generate lists</p>
-              </div>
+          <div className="p-6 bg-white rounded-2xl border border-cookbook-200/70">
+            <div className="w-12 h-12 rounded-xl bg-cookbook-100 flex items-center justify-center mb-4">
+              <span className="text-2xl">🛒</span>
             </div>
+            <h2 className="font-serif text-xl font-semibold text-cookbook-900">Shopping List</h2>
+            <p className="mt-1 text-cookbook-600">Auto-generate lists</p>
           </div>
         </div>
 
         {/* Sample Recipes */}
         <div className="space-y-6">
-          <div className="flex justify-between items-center">
-            <h2 className="text-2xl font-bold text-gray-900">Sample Recipes</h2>
-          </div>
+          <h2 className="font-serif text-2xl font-bold text-cookbook-900">Sample Recipes</h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {DEMO_RECIPES.map((recipe) => (
-              <div
-                key={recipe.id}
-                className="card hover:shadow-lg transition-shadow duration-200 cursor-pointer"
-              >
-                <div className="space-y-3">
-                  <div className="flex justify-between items-start">
-                    <h3 className="text-lg font-semibold text-gray-900 line-clamp-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {DEMO_RECIPES.map((recipe) => {
+              const gradientClass = categoryGradients[recipe.category] || 'from-cookbook-100 to-cookbook-50';
+              const totalTime = recipe.prep_time_minutes + recipe.cook_time_minutes;
+
+              return (
+                <div
+                  key={recipe.id}
+                  className="bg-white rounded-2xl border border-cookbook-200/70 overflow-hidden hover:border-cookbook-300 transition-colors cursor-pointer"
+                >
+                  {/* Visual header with gradient */}
+                  <div className={`h-24 bg-gradient-to-br ${gradientClass} flex items-center justify-center`}>
+                    <span className="text-3xl opacity-60">
+                      {recipe.category === 'breakfast' && '🍳'}
+                      {recipe.category === 'lunch' && '🥗'}
+                      {recipe.category === 'dinner' && '🍝'}
+                      {recipe.category === 'snack' && '🍿'}
+                      {recipe.category === 'dessert' && '🍫'}
+                      {recipe.category === 'beverage' && '🥤'}
+                    </span>
+                  </div>
+
+                  <div className="p-4 space-y-2">
+                    <h3 className="font-serif text-lg font-semibold text-cookbook-900 line-clamp-1">
                       {recipe.name}
                     </h3>
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${getCategoryColor(recipe.category)}`}
-                    >
-                      {recipe.category}
-                    </span>
-                  </div>
-                  {recipe.description && (
-                    <p className="text-gray-600 text-sm line-clamp-2">
-                      {recipe.description}
-                    </p>
-                  )}
-                  <div className="flex items-center justify-between text-sm text-gray-500">
-                    <span>
-                      {recipe.prep_time_minutes + recipe.cook_time_minutes} min
-                    </span>
-                    <span>{recipe.servings} servings</span>
-                  </div>
-                  <div className="pt-2 border-t">
-                    <p className="text-xs text-gray-500">
-                      {recipe.ingredients.length} ingredients
-                    </p>
+                    {recipe.description && (
+                      <p className="text-cookbook-600 text-sm line-clamp-2">
+                        {recipe.description}
+                      </p>
+                    )}
+                    <div className="flex items-center justify-between pt-2 border-t border-cookbook-100">
+                      <span className="chip text-xs capitalize">{recipe.category}</span>
+                      <span className="text-xs text-cookbook-500">{totalTime} min</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
         {/* CTA Section */}
-        <div className="mt-12 text-center">
-          <p className="text-gray-600 mb-4">
+        <div className="mt-16 text-center">
+          <p className="text-cookbook-600 mb-4">
             Ready to start planning your meals?
           </p>
-          <Link to="/register" className="btn-primary px-8 py-3 text-lg">
+          <Link to="/register" className="btn-primary px-8 py-3">
             Create Your Free Account
           </Link>
         </div>
       </main>
+
+      {/* Footer */}
+      <footer className="border-t border-cookbook-200/60 mt-16">
+        <div className="mx-auto max-w-6xl px-4 py-8 text-center text-cookbook-500 text-sm">
+          Dish Dash - Your Personal Recipe Cookbook
+        </div>
+      </footer>
     </div>
   );
 }
