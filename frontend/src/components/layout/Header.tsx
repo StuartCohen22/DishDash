@@ -15,8 +15,8 @@ export function Header() {
 
   const navLinks = [
     { path: '/recipes', label: 'Recipes' },
-    { path: '/meal-plans', label: 'Planner' },
-    { path: '/shopping-list', label: 'Shopping' },
+    { path: '/planner', label: 'Planner' },
+    { path: '/shopping', label: 'Shopping' },
   ];
 
   return (

@@ -8,6 +8,8 @@ import { RecipesPage } from '@/pages/RecipesPage';
 import { RecipeCreatePage } from '@/pages/RecipeCreatePage';
 import { RecipeDetailPage } from '@/pages/RecipeDetailPage';
 import { RecipeEditPage } from '@/pages/RecipeEditPage';
+import { MealPlannerPage } from '@/pages/MealPlannerPage';
+import { ShoppingListPage } from '@/pages/ShoppingListPage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 import { DemoPage } from '@/pages/DemoPage';
 
@@ -29,27 +31,14 @@ function App() {
           <Route path="/recipes/new" element={<RecipeCreatePage />} />
           <Route path="/recipes/:id" element={<RecipeDetailPage />} />
           <Route path="/recipes/:id/edit" element={<RecipeEditPage />} />
-          <Route path="/meal-plans" element={<PlaceholderPage title="Meal Plans" description="Plan your weekly meals and generate shopping lists." />} />
-          <Route path="/meal-plans/new" element={<PlaceholderPage title="Create Meal Plan" description="Start a new meal plan for the week." />} />
-          <Route path="/meal-plans/:id" element={<PlaceholderPage title="Meal Plan Detail" description="View and manage your meal plan." />} />
-          <Route path="/shopping-list" element={<PlaceholderPage title="Shopping List" description="Your generated shopping lists will appear here." />} />
+          <Route path="/planner" element={<MealPlannerPage />} />
+          <Route path="/shopping" element={<ShoppingListPage />} />
         </Route>
       </Route>
 
       {/* 404 */}
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
-  );
-}
-
-// Placeholder component for routes not yet implemented
-function PlaceholderPage({ title, description }: { title: string; description: string }) {
-  return (
-    <div className="card text-center py-12">
-      <h1 className="font-serif text-2xl font-bold text-cookbook-900">{title}</h1>
-      <p className="mt-2 text-cookbook-600">{description}</p>
-      <p className="mt-4 text-sm text-cookbook-400">Coming soon!</p>
-    </div>
   );
 }
 

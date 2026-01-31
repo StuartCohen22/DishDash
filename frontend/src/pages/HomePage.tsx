@@ -32,7 +32,7 @@ export function HomePage() {
 
         {/* Meal Plans Card */}
         <Link
-          to="/meal-plans"
+          to="/planner"
           className="group p-6 bg-white rounded-2xl border border-cookbook-200/70 hover:border-cookbook-300 transition-all duration-200"
         >
           <div className="w-12 h-12 rounded-xl bg-accent-100 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
@@ -44,7 +44,7 @@ export function HomePage() {
 
         {/* Shopping List Card */}
         <Link
-          to="/shopping-list"
+          to="/shopping"
           className="group p-6 bg-white rounded-2xl border border-cookbook-200/70 hover:border-cookbook-300 transition-all duration-200"
         >
           <div className="w-12 h-12 rounded-xl bg-cookbook-100 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
@@ -83,7 +83,7 @@ export function HomePage() {
             <div>
               <h3 className="font-medium text-cookbook-900">Create a meal plan</h3>
               <p className="text-cookbook-600 text-sm mt-1">
-                <Link to="/meal-plans/new" className="text-accent-600 hover:underline">
+                <Link to="/planner" className="text-accent-600 hover:underline">
                   Plan your week
                 </Link>{' '}
                 by assigning recipes to each day.

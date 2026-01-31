@@ -13,6 +13,8 @@ from app.config import settings
 from app.database import async_session_maker, close_db
 from app.routes.auth import router as auth_router
 from app.routes.recipes import router as recipes_router
+from app.routes.meal_plans import router as meal_plans_router, planned_meals_router
+from app.routes.shopping import router as shopping_router
 
 # Configure logging
 logging.basicConfig(
@@ -112,6 +114,9 @@ async def root() -> dict:
 # Include routers
 app.include_router(auth_router, prefix="/api/v1")
 app.include_router(recipes_router, prefix="/api/v1")
+app.include_router(meal_plans_router, prefix="/api/v1")
+app.include_router(planned_meals_router, prefix="/api/v1")
+app.include_router(shopping_router, prefix="/api/v1")
 
 
 # Exception handlers
