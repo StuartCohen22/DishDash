@@ -39,7 +39,7 @@ export function RecipeForm({ initialData, onSubmit, isLoading }: RecipeFormProps
   const [ingredients, setIngredients] = useState<IngredientInputType[]>(
     initialData?.ingredients?.map((ing, idx) => ({
       name: ing.name,
-      quantity: ing.quantity,
+      quantity: typeof ing.quantity === 'string' ? parseFloat(ing.quantity) : ing.quantity,
       unit: ing.unit,
       order_index: idx,
     })) || [{ name: '', quantity: 1, unit: IngredientUnit.PIECE, order_index: 0 }]
