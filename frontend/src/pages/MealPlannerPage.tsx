@@ -190,20 +190,20 @@ export function MealPlannerPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cookbook-600"></div>
+        <div className="spinner w-8 h-8"></div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-serif font-bold text-cookbook-900">
+          <h1 className="text-3xl font-serif font-bold text-espresso-800">
             Meal Planner
           </h1>
-          <p className="text-cookbook-600 mt-1">
+          <p className="text-espresso-600 mt-1">
             Plan your meals for the week
           </p>
         </div>
@@ -231,11 +231,11 @@ export function MealPlannerPage() {
       </div>
 
       {/* Week Navigation */}
-      <div className="card p-4">
+      <div className="card">
         <div className="flex items-center justify-between">
           <button
             onClick={handlePrevWeek}
-            className="p-2 rounded-lg hover:bg-cookbook-100 text-cookbook-600 transition-colors"
+            className="p-3 rounded-xl hover:bg-cream-100 text-espresso-600 transition-smooth press-scale"
             aria-label="Previous week"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -244,17 +244,17 @@ export function MealPlannerPage() {
           </button>
 
           <div className="text-center">
-            <h2 className="text-xl font-serif font-semibold text-cookbook-900">
+            <h2 className="text-xl font-serif font-semibold text-espresso-800">
               {formatWeekLabel(currentWeekStart)}
             </h2>
-            <div className="flex items-center justify-center gap-2 mt-1">
+            <div className="flex items-center justify-center gap-2 mt-2">
               {isCurrentWeek && (
-                <span className="text-xs bg-sage-100 text-sage-700 px-2 py-0.5 rounded-full">
+                <span className="text-xs bg-sage-100 text-sage-700 px-3 py-1 rounded-full font-medium">
                   Current Week
                 </span>
               )}
               {selectedPlan && (
-                <span className="text-xs bg-cookbook-100 text-cookbook-600 px-2 py-0.5 rounded-full">
+                <span className="text-xs bg-cream-200 text-espresso-600 px-3 py-1 rounded-full font-medium">
                   {selectedPlan.planned_meals.length} meals planned
                 </span>
               )}
@@ -263,7 +263,7 @@ export function MealPlannerPage() {
 
           <button
             onClick={handleNextWeek}
-            className="p-2 rounded-lg hover:bg-cookbook-100 text-cookbook-600 transition-colors"
+            className="p-3 rounded-xl hover:bg-cream-100 text-espresso-600 transition-smooth press-scale"
             aria-label="Next week"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -274,10 +274,10 @@ export function MealPlannerPage() {
 
         {/* Today button */}
         {!isCurrentWeek && (
-          <div className="flex justify-center mt-3">
+          <div className="flex justify-center mt-4">
             <button
               onClick={handleToday}
-              className="text-sm text-cookbook-500 hover:text-cookbook-700 underline"
+              className="text-sm text-coral-500 hover:text-coral-600 font-medium transition-colors"
             >
               Go to current week
             </button>
@@ -288,14 +288,14 @@ export function MealPlannerPage() {
       {/* Week Planner */}
       {selectedPlan ? (
         <>
-          <div className="card p-4">
-            <div className="flex items-center justify-between mb-4">
+          <div className="card">
+            <div className="flex items-center justify-between mb-6">
               <div>
-                <h3 className="font-medium text-cookbook-700">{selectedPlan.name}</h3>
+                <h3 className="font-medium text-espresso-700 text-lg">{selectedPlan.name}</h3>
               </div>
               <button
                 onClick={handleDeletePlan}
-                className="text-cookbook-400 hover:text-red-500 p-2"
+                className="text-espresso-400 hover:text-red-500 hover:bg-red-50 p-2 rounded-lg transition-smooth"
                 title="Delete plan"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -322,10 +322,13 @@ export function MealPlannerPage() {
               <button
                 onClick={handleGenerateShoppingList}
                 disabled={generating}
-                className="btn-primary px-6 py-3 text-lg"
+                className="btn-secondary px-8 py-4 text-lg"
               >
                 {generating ? (
-                  'Generating...'
+                  <span className="flex items-center gap-2">
+                    <span className="spinner w-5 h-5 border-white/30 border-t-white"></span>
+                    Generating...
+                  </span>
                 ) : (
                   <>
                     <svg className="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -344,24 +347,32 @@ export function MealPlannerPage() {
           )}
         </>
       ) : (
-        <div className="card p-8 text-center">
-          <p className="text-cookbook-500 mb-4">
+        <div className="card text-center py-12">
+          <div className="text-5xl mb-4">📅</div>
+          <p className="text-espresso-600 mb-6 text-lg">
             No meal plan for this week yet.
           </p>
           <button
             onClick={handleCreatePlanForWeek}
             disabled={creating}
-            className="btn-primary"
+            className="btn-primary px-6 py-3"
           >
-            {creating ? 'Creating...' : `Create Plan for ${generatePlanName(currentWeekStart)}`}
+            {creating ? (
+              <span className="flex items-center gap-2">
+                <span className="spinner w-5 h-5 border-white/30 border-t-white"></span>
+                Creating...
+              </span>
+            ) : (
+              `Create Plan for ${generatePlanName(currentWeekStart)}`
+            )}
           </button>
         </div>
       )}
 
       {/* Saved weeks overview */}
       {mealPlans.length > 0 && (
-        <div className="card p-4">
-          <h3 className="font-medium text-cookbook-700 mb-3">Your Saved Weeks</h3>
+        <div className="card">
+          <h3 className="font-medium text-espresso-700 mb-4">Your Saved Weeks</h3>
           <div className="flex flex-wrap gap-2">
             {mealPlans.map((plan) => {
               const isSelected = selectedPlan?.id === plan.id;
@@ -369,14 +380,14 @@ export function MealPlannerPage() {
                 <button
                   key={plan.id}
                   onClick={() => setCurrentWeekStart(new Date(plan.week_start_date + 'T00:00:00'))}
-                  className={`px-3 py-2 rounded-lg text-sm transition-colors ${
+                  className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-smooth press-scale ${
                     isSelected
-                      ? 'bg-cookbook-800 text-white'
-                      : 'bg-cookbook-100 text-cookbook-700 hover:bg-cookbook-200'
+                      ? 'bg-coral-500 text-white shadow-glow-coral'
+                      : 'bg-cream-100 text-espresso-700 hover:bg-cream-200'
                   }`}
                 >
                   {plan.name}
-                  <span className="ml-1 opacity-70">({plan.planned_meals?.length || 0})</span>
+                  <span className="ml-1.5 opacity-70">({plan.planned_meals?.length || 0})</span>
                 </button>
               );
             })}

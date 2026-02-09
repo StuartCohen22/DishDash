@@ -60,34 +60,34 @@ export function RegisterForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-cookbook-50 to-cookbook-100 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-cream-50 via-cream-100 to-cream-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full animate-fade-in">
         {/* Logo and Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-3 mb-6">
-            <div className="h-12 w-12 rounded-xl bg-cookbook-900 text-cookbook-50 grid place-items-center text-lg font-bold">
+            <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-coral-500 to-coral-600 text-white grid place-items-center text-xl font-bold shadow-glow-coral">
               DD
             </div>
-            <span className="font-serif text-2xl font-bold text-cookbook-900">Dish Dash</span>
+            <span className="font-serif text-2xl font-bold text-espresso-800">Dish Dash</span>
           </div>
-          <h1 className="font-serif text-3xl font-bold text-cookbook-900">
+          <h1 className="font-serif text-3xl font-bold text-espresso-800">
             Create your account
           </h1>
-          <p className="mt-2 text-cookbook-600">
+          <p className="mt-2 text-espresso-600">
             Start organizing your recipes today
           </p>
         </div>
 
         {/* Form Card */}
-        <div className="bg-white rounded-2xl border border-cookbook-200/70 p-8">
+        <div className="bg-white rounded-2xl border border-cream-200/60 p-8 shadow-soft">
           <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+              <div className="bg-red-50 border-2 border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
                 {error}
               </div>
             )}
 
-            <div className="space-y-4">
+            <div className="space-y-5">
               <div>
                 <label htmlFor="name" className="label">
                   Full name
@@ -101,7 +101,7 @@ export function RegisterForm() {
                   {...register('name')}
                 />
                 {errors.name && (
-                  <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
+                  <p className="mt-1.5 text-sm text-red-600">{errors.name.message}</p>
                 )}
               </div>
 
@@ -118,7 +118,7 @@ export function RegisterForm() {
                   {...register('email')}
                 />
                 {errors.email && (
-                  <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+                  <p className="mt-1.5 text-sm text-red-600">{errors.email.message}</p>
                 )}
               </div>
 
@@ -135,7 +135,7 @@ export function RegisterForm() {
                   {...register('password')}
                 />
                 {errors.password && (
-                  <p className="mt-1 text-sm text-red-600">
+                  <p className="mt-1.5 text-sm text-red-600">
                     {errors.password.message}
                   </p>
                 )}
@@ -154,7 +154,7 @@ export function RegisterForm() {
                   {...register('confirmPassword')}
                 />
                 {errors.confirmPassword && (
-                  <p className="mt-1 text-sm text-red-600">
+                  <p className="mt-1.5 text-sm text-red-600">
                     {errors.confirmPassword.message}
                   </p>
                 )}
@@ -164,18 +164,25 @@ export function RegisterForm() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full btn-primary py-3 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full btn-primary py-3.5 text-base disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? 'Creating account...' : 'Create account'}
+              {isSubmitting ? (
+                <span className="flex items-center justify-center gap-2">
+                  <span className="spinner w-5 h-5 border-white/30 border-t-white"></span>
+                  Creating account...
+                </span>
+              ) : (
+                'Create account'
+              )}
             </button>
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-sm text-cookbook-600">
+            <p className="text-sm text-espresso-600">
               Already have an account?{' '}
               <Link
                 to="/login"
-                className="font-medium text-accent-600 hover:text-accent-700"
+                className="font-medium text-coral-500 hover:text-coral-600 transition-colors"
               >
                 Sign in
               </Link>
