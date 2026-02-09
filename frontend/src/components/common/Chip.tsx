@@ -9,9 +9,9 @@ export function Chip({ label, active = false, onClick }: ChipProps) {
     <button
       type="button"
       onClick={onClick}
-      className={`chip transition-colors ${
+      className={`chip press-scale ${
         active ? 'chip-active' : ''
-      } ${onClick ? 'cursor-pointer hover:bg-cookbook-200' : 'cursor-default'}`}
+      } ${onClick ? 'cursor-pointer' : 'cursor-default'}`}
     >
       {label}
     </button>

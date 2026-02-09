@@ -112,24 +112,25 @@ export function ShoppingListPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cookbook-600"></div>
+        <div className="spinner w-8 h-8"></div>
       </div>
     );
   }
 
   if (mealPlans.length === 0) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-6 animate-fade-in">
         <div>
-          <h1 className="text-3xl font-serif font-bold text-cookbook-900">Shopping List</h1>
-          <p className="text-cookbook-600 mt-1">Your shopping list based on meal plans</p>
+          <h1 className="text-3xl font-serif font-bold text-espresso-800">Shopping List</h1>
+          <p className="text-espresso-600 mt-1">Your shopping list based on meal plans</p>
         </div>
 
-        <div className="card p-8 text-center">
-          <p className="text-cookbook-500 mb-4">
+        <div className="card text-center py-12">
+          <div className="text-5xl mb-4">🛒</div>
+          <p className="text-espresso-600 mb-6 text-lg">
             You need to create a meal plan first before you can generate a shopping list.
           </p>
-          <Link to="/planner" className="btn-primary">
+          <Link to="/planner" className="btn-primary px-6 py-3">
             Create Meal Plan
           </Link>
         </div>
@@ -138,12 +139,12 @@ export function ShoppingListPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-serif font-bold text-cookbook-900">Shopping List</h1>
-          <p className="text-cookbook-600 mt-1">Your shopping list based on meal plans</p>
+          <h1 className="text-3xl font-serif font-bold text-espresso-800">Shopping List</h1>
+          <p className="text-espresso-600 mt-1">Your shopping list based on meal plans</p>
         </div>
 
         <div className="flex items-center gap-3">
@@ -156,7 +157,7 @@ export function ShoppingListPage() {
             {mealPlans.map((plan) => (
               <option key={plan.id} value={plan.id}>
                 {plan.name}
-                {plan.shopping_list ? ' ✓' : ''}
+                {plan.shopping_list ? ' (has list)' : ''}
               </option>
             ))}
           </select>
@@ -166,29 +167,40 @@ export function ShoppingListPage() {
             disabled={generating || !selectedPlanId}
             className="btn-primary"
           >
-            {generating ? 'Generating...' : shoppingList ? 'Refresh' : 'Generate'}
+            {generating ? (
+              <span className="flex items-center gap-2">
+                <span className="spinner w-4 h-4 border-white/30 border-t-white"></span>
+                Generating...
+              </span>
+            ) : shoppingList ? (
+              'Refresh'
+            ) : (
+              'Generate'
+            )}
           </button>
         </div>
       </div>
 
       {error && (
-        <div className="bg-red-50 text-red-700 p-4 rounded-lg">{error}</div>
+        <div className="bg-red-50 text-red-700 p-4 rounded-xl border-2 border-red-200">{error}</div>
       )}
 
       {/* Shopping list */}
       {shoppingList ? (
-        <div className="card p-6">
-          <div className="flex items-center justify-between mb-4">
+        <div className="card">
+          <div className="flex items-center justify-between mb-6">
             <div>
-              <p className="text-sm text-cookbook-500">
+              <p className="text-sm text-espresso-600">
                 Generated {new Date(shoppingList.generated_at).toLocaleString()}
               </p>
             </div>
-            <div className="flex items-center gap-4 text-sm">
-              <span className="text-cookbook-600">
+            <div className="flex items-center gap-4 text-sm font-medium">
+              <span className="text-espresso-600 bg-cream-100 px-3 py-1 rounded-full">
                 {shoppingList.to_buy_count + shoppingList.pantry_count} remaining
               </span>
-              <span className="text-sage-600">{shoppingList.purchased_count} purchased</span>
+              <span className="text-sage-700 bg-sage-100 px-3 py-1 rounded-full">
+                {shoppingList.purchased_count} purchased
+              </span>
             </div>
           </div>
 
@@ -199,14 +211,22 @@ export function ShoppingListPage() {
           />
         </div>
       ) : (
-        <div className="card p-8 text-center">
-          <p className="text-cookbook-500 mb-4">
+        <div className="card text-center py-12">
+          <div className="text-5xl mb-4">📝</div>
+          <p className="text-espresso-600 mb-6 text-lg">
             No shopping list for this meal plan yet.
             {selectedPlanId && ' Click "Generate" to create one based on your planned meals.'}
           </p>
           {selectedPlanId && (
-            <button onClick={handleGenerate} disabled={generating} className="btn-primary">
-              {generating ? 'Generating...' : 'Generate Shopping List'}
+            <button onClick={handleGenerate} disabled={generating} className="btn-primary px-6 py-3">
+              {generating ? (
+                <span className="flex items-center gap-2">
+                  <span className="spinner w-4 h-4 border-white/30 border-t-white"></span>
+                  Generating...
+                </span>
+              ) : (
+                'Generate Shopping List'
+              )}
             </button>
           )}
         </div>
