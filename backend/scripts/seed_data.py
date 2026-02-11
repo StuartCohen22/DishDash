@@ -16,6 +16,7 @@ from app.utils.enums import IngredientUnit, MealType, RecipeCategory
 
 # Demo users
 DEMO_USERS = [
+    {"email": "jstuartcohen@gmail.com", "password": "jsc27502", "name": "Stuart Cohen"},
     {"email": "demo@dishdash.app", "password": "demo1234", "name": "Demo User"},
     {"email": "chef@dishdash.app", "password": "chef1234", "name": "Chef Example"},
 ]
@@ -265,28 +266,37 @@ async def seed_database():
     print("Starting database seed...")
 
     async with async_session_maker() as db:
-        # Check if data already exists
-        result = await db.execute(select(User).limit(1))
-        if result.scalar_one_or_none():
-            print("Database already has data. Skipping seed.")
-            return
+        # Find or create the primary user
+        target_email = DEMO_USERS[0]["email"]
+        result = await db.execute(select(User).where(User.email == target_email))
+        demo_user = result.scalar_one_or_none()
 
-        # Create users
-        users = []
-        for user_data in DEMO_USERS:
-            user = User(
-                email=user_data["email"],
-                password_hash=AuthService.get_password_hash(user_data["password"]),
-                name=user_data["name"],
+        if demo_user:
+            print(f"Found existing user: {target_email}")
+            # Check if they already have recipes
+            existing = await db.execute(
+                select(Recipe).where(Recipe.user_id == demo_user.id).limit(1)
             )
-            db.add(user)
-            users.append(user)
-            print(f"Created user: {user_data['email']}")
+            if existing.scalar_one_or_none():
+                print("User already has recipes. Skipping seed.")
+                return
+        else:
+            # Create all demo users
+            users = []
+            for user_data in DEMO_USERS:
+                user = User(
+                    email=user_data["email"],
+                    password_hash=AuthService.get_password_hash(user_data["password"]),
+                    name=user_data["name"],
+                )
+                db.add(user)
+                users.append(user)
+                print(f"Created user: {user_data['email']}")
 
-        await db.flush()
+            await db.flush()
+            demo_user = users[0]
 
-        # Create recipes for the first user
-        demo_user = users[0]
+        # Create recipes for the user
         recipes = []
 
         for idx, recipe_data in enumerate(DEMO_RECIPES):
@@ -341,7 +351,7 @@ async def seed_database():
             (2, MealType.DINNER, 6),  # Wednesday dinner - Tacos
             (3, MealType.BREAKFAST, 0),  # Thursday breakfast - Pancakes
             (4, MealType.SNACK, 8),  # Friday snack - Hummus
-            (5, MealType.DESSERT, 7),  # Saturday dessert - Brownies
+            (5, MealType.SNACK, 7),  # Saturday snack - Brownies
         ]
 
         for day, meal_type, recipe_idx in planned_meals_data:
