@@ -58,7 +58,7 @@ export function WeekPlanner({ mealPlan, onAddMeal, onRemoveMeal }: WeekPlannerPr
           {/* Header row with day names */}
           <div className="grid grid-cols-8 gap-2 mb-2">
             <div className="p-2"></div> {/* Empty corner cell */}
-            {DAYS_OF_WEEK.map((day, index) => (
+            {DAYS_OF_WEEK.map((day, _index) => (
               <div
                 key={day}
                 className="p-2 text-center font-medium text-cookbook-700 bg-cookbook-100 rounded-lg"
