@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DishDash – Project Presentation</title>
+  <style>
+    /* ─── Reset & Base ──────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --orange:   #f97316;
+      --orange-d: #ea6c0a;
+      --green:    #22c55e;
+      --blue:     #3b82f6;
+      --purple:   #a855f7;
+      --bg:       #0f172a;
+      --surface:  #1e293b;
+      --border:   #334155;
+      --text:     #e2e8f0;
+      --muted:    #94a3b8;
+      --code-bg:  #0f172a;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow: hidden;
+    }
+
+    /* ─── Slide Container ───────────────────────────────────── */
+    #deck {
+      width: 100vw; height: 100vh;
+      position: relative;
+    }
+
+    .slide {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      padding: 48px 64px;
+      opacity: 0;
+      transform: translateX(60px);
+      transition: opacity .4s ease, transform .4s ease;
+      pointer-events: none;
+    }
+    .slide.active {
+      opacity: 1; transform: translateX(0);
+      pointer-events: all;
+    }
+    .slide.out {
+      opacity: 0; transform: translateX(-60px);
+    }
+
+    /* ─── Navigation ───────────────────────────────────────── */
+    #nav {
+      position: fixed; bottom: 28px; left: 50%;
+      transform: translateX(-50%);
+      display: flex; align-items: center; gap: 16px;
+      background: rgba(30,41,59,.92);
+      border: 1px solid var(--border);
+      border-radius: 40px;
+      padding: 10px 20px;
+      backdrop-filter: blur(8px);
+      z-index: 100;
+    }
+    #nav button {
+      background: none; border: none; cursor: pointer;
+      color: var(--text); font-size: 20px; padding: 4px 10px;
+      border-radius: 20px; transition: background .2s;
+    }
+    #nav button:hover { background: var(--border); }
+    #nav button:disabled { color: var(--muted); cursor: default; }
+    #slide-num { color: var(--muted); font-size: 14px; min-width: 60px; text-align: center; }
+
+    #progress {
+      position: fixed; top: 0; left: 0;
+      height: 3px; background: var(--orange);
+      transition: width .35s ease;
+      z-index: 100;
+    }
+
+    /* ─── Slide 1: Title ────────────────────────────────────── */
+    .title-slide { background: radial-gradient(ellipse at 40% 50%, #1c1132 0%, var(--bg) 70%); }
+    .logo-ring {
+      width: 96px; height: 96px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--orange), #fbbf24);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 44px;
+      box-shadow: 0 0 60px rgba(249,115,22,.45);
+      margin-bottom: 24px;
+    }
+    .title-slide h1 { font-size: 64px; font-weight: 800; letter-spacing: -2px; }
+    .title-slide h1 span { color: var(--orange); }
+    .title-slide p  { font-size: 22px; color: var(--muted); margin-top: 10px; }
+    .badge-row { display: flex; gap: 10px; margin-top: 28px; flex-wrap: wrap; justify-content: center; }
+    .badge {
+      padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 600;
+      border: 1px solid;
+    }
+    .badge.orange { color: var(--orange); border-color: var(--orange); background: rgba(249,115,22,.1); }
+    .badge.blue   { color: var(--blue);   border-color: var(--blue);   background: rgba(59,130,246,.1); }
+    .badge.green  { color: var(--green);  border-color: var(--green);  background: rgba(34,197,94,.1); }
+    .badge.purple { color: var(--purple); border-color: var(--purple); background: rgba(168,85,247,.1); }
+
+    /* ─── Section Header ────────────────────────────────────── */
+    .slide-title {
+      font-size: 38px; font-weight: 800; margin-bottom: 8px;
+      letter-spacing: -1px; align-self: flex-start;
+    }
+    .slide-title span { color: var(--orange); }
+    .divider {
+      width: 56px; height: 4px;
+      background: linear-gradient(90deg, var(--orange), #fbbf24);
+      border-radius: 2px; margin-bottom: 32px; align-self: flex-start;
+    }
+
+    /* ─── Cards ─────────────────────────────────────────────── */
+    .card-grid {
+      display: grid; gap: 18px; width: 100%;
+    }
+    .card-grid.cols2 { grid-template-columns: 1fr 1fr; }
+    .card-grid.cols3 { grid-template-columns: 1fr 1fr 1fr; }
+    .card-grid.cols4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px 26px;
+    }
+    .card h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+    .card p, .card li { font-size: 14px; color: var(--muted); line-height: 1.6; }
+    .card ul { padding-left: 18px; }
+
+    .card.accent-orange { border-left: 3px solid var(--orange); }
+    .card.accent-blue   { border-left: 3px solid var(--blue); }
+    .card.accent-green  { border-left: 3px solid var(--green); }
+    .card.accent-purple { border-left: 3px solid var(--purple); }
+
+    .icon-card { text-align: center; }
+    .icon-card .icon { font-size: 36px; margin-bottom: 10px; }
+    .icon-card h3 { font-size: 16px; margin-bottom: 6px; color: var(--text); }
+
+    /* ─── Repo Tree ─────────────────────────────────────────── */
+    .tree {
+      font-family: 'Cascadia Code', 'Fira Code', monospace;
+      font-size: 14px; line-height: 1.8;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px; padding: 24px 30px;
+      width: 100%;
+    }
+    .tree .dir   { color: var(--blue); font-weight: 700; }
+    .tree .file  { color: var(--muted); }
+    .tree .label {
+      display: inline-block;
+      margin-left: 10px;
+      background: rgba(249,115,22,.15);
+      color: var(--orange);
+      font-size: 11px; font-family: sans-serif;
+      padding: 1px 8px; border-radius: 10px;
+      font-weight: 600;
+    }
+
+    /* ─── Flow Diagram ──────────────────────────────────────── */
+    .flow {
+      display: flex; align-items: flex-start; gap: 0;
+      width: 100%; justify-content: center; flex-wrap: nowrap;
+    }
+    .flow-step {
+      flex: 1; min-width: 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px; padding: 20px 18px;
+      text-align: center;
+      position: relative;
+    }
+    .flow-step .step-icon { font-size: 30px; margin-bottom: 8px; }
+    .flow-step h4 { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+    .flow-step p  { font-size: 12px; color: var(--muted); line-height: 1.5; }
+    .flow-arrow {
+      align-self: center;
+      font-size: 22px; color: var(--orange);
+      flex-shrink: 0; padding: 0 6px;
+      margin-top: -18px;
+    }
+    .flow-step.highlight { border-color: var(--orange); background: rgba(249,115,22,.07); }
+
+    /* ─── Code block ────────────────────────────────────────── */
+    .code-panel {
+      background: var(--code-bg); border: 1px solid var(--border);
+      border-radius: 12px; padding: 20px 24px;
+      font-family: 'Cascadia Code', 'Fira Code', monospace;
+      font-size: 13px; line-height: 1.7;
+      width: 100%; overflow: hidden;
+    }
+    .code-panel .comment { color: #64748b; }
+    .code-panel .keyword { color: #a78bfa; }
+    .code-panel .fn      { color: #60a5fa; }
+    .code-panel .string  { color: #86efac; }
+    .code-panel .type    { color: #fbbf24; }
+    .code-panel .op      { color: var(--orange); }
+
+    /* ─── Two-column layout ─────────────────────────────────── */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; width: 100%; }
+    .two-col.wide { grid-template-columns: 1.2fr 1fr; }
+
+    /* ─── Stack slide ───────────────────────────────────────── */
+    .stack-row {
+      display: flex; gap: 12px; align-items: center;
+      width: 100%; flex-wrap: wrap;
+    }
+    .tech-chip {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px; padding: 10px 16px;
+      font-size: 14px; font-weight: 600;
+    }
+    .tech-chip .dot {
+      width: 10px; height: 10px; border-radius: 50%;
+    }
+
+    /* ─── End Slide ─────────────────────────────────────────── */
+    .end-slide { background: radial-gradient(ellipse at 60% 50%, #0f2a1c 0%, var(--bg) 70%); }
+    .end-slide h2 { font-size: 52px; font-weight: 800; }
+    .end-slide h2 span { color: var(--green); }
+    .url-row { margin-top: 20px; display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+    .url-chip {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; padding: 8px 18px; font-size: 14px;
+      color: var(--muted); font-family: monospace;
+    }
+
+    .full-w { width: 100%; }
+    .mt8  { margin-top: 8px; }
+    .mt16 { margin-top: 16px; }
+
+    .small { font-size: 13px; }
+    .center { text-align: center; }
+
+    /* keyboard hint */
+    #hint {
+      position: fixed; top: 16px; right: 20px;
+      font-size: 12px; color: var(--muted);
+      opacity: .6;
+    }
+  </style>
+</head>
+<body>
+
+<div id="progress"></div>
+<div id="hint">← → or click to navigate</div>
+
+<div id="deck">
+
+  <!-- ══════════════ SLIDE 1 – Title ══════════════ -->
+  <section class="slide title-slide active" id="s1">
+    <div class="logo-ring">🍽️</div>
+    <h1><span>Dish</span>Dash</h1>
+    <p>Recipe &amp; Meal Planner · University Group Project</p>
+    <div class="badge-row">
+      <span class="badge orange">FastAPI</span>
+      <span class="badge blue">React 18</span>
+      <span class="badge green">PostgreSQL</span>
+      <span class="badge purple">GCP Cloud Run</span>
+      <span class="badge blue">Docker</span>
+      <span class="badge orange">JWT Auth</span>
+    </div>
+  </section>
+
+  <!-- ══════════════ SLIDE 2 – What is DishDash ══════════════ -->
+  <section class="slide" id="s2">
+    <h2 class="slide-title">What is <span>DishDash</span>?</h2>
+    <div class="divider"></div>
+    <div class="card-grid cols2 full-w">
+      <div class="card accent-orange icon-card">
+        <div class="icon">🥗</div>
+        <h3>Recipe Management</h3>
+        <p>Create and organize recipes with categorized ingredients, prep/cook times, and instructions.</p>
+      </div>
+      <div class="card accent-blue icon-card">
+        <div class="icon">📅</div>
+        <h3>Weekly Meal Planning</h3>
+        <p>Drag recipes onto a 7-day calendar grid, assigning breakfast, lunch, dinner, or snack slots.</p>
+      </div>
+      <div class="card accent-green icon-card">
+        <div class="icon">🛒</div>
+        <h3>Auto Shopping Lists</h3>
+        <p>One click aggregates all ingredients from a week's meals, deduplicating and summing quantities.</p>
+      </div>
+      <div class="card accent-purple icon-card">
+        <div class="icon">🔐</div>
+        <h3>Secure Auth</h3>
+        <p>JWT-based authentication with bcrypt password hashing — all data scoped per user.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════ SLIDE 3 – Tech Stack ══════════════ -->
+  <section class="slide" id="s3">
+    <h2 class="slide-title">Tech <span>Stack</span></h2>
+    <div class="divider"></div>
+    <div class="two-col full-w">
+      <div>
+        <div class="card accent-orange" style="margin-bottom:16px">
+          <h3 style="color:var(--orange);margin-bottom:12px">Backend</h3>
+          <div class="stack-row">
+            <span class="tech-chip"><span class="dot" style="background:#06b6d4"></span>Python 3.12</span>
+            <span class="tech-chip"><span class="dot" style="background:var(--orange)"></span>FastAPI</span>
+            <span class="tech-chip"><span class="dot" style="background:#4ade80"></span>PostgreSQL 15</span>
+            <span class="tech-chip"><span class="dot" style="background:#818cf8"></span>SQLAlchemy 2 async</span>
+            <span class="tech-chip"><span class="dot" style="background:#fb923c"></span>Alembic</span>
+            <span class="tech-chip"><span class="dot" style="background:#f472b6"></span>Pydantic v2</span>
+            <span class="tech-chip"><span class="dot" style="background:#a3e635"></span>python-jose + bcrypt</span>
+          </div>
+        </div>
+        <div class="card accent-blue">
+          <h3 style="color:var(--blue);margin-bottom:12px">Frontend</h3>
+          <div class="stack-row">
+            <span class="tech-chip"><span class="dot" style="background:#60a5fa"></span>React 18 + TS</span>
+            <span class="tech-chip"><span class="dot" style="background:#fbbf24"></span>Vite 5</span>
+            <span class="tech-chip"><span class="dot" style="background:#4ade80"></span>Tailwind CSS</span>
+            <span class="tech-chip"><span class="dot" style="background:#f87171"></span>React Router v6</span>
+            <span class="tech-chip"><span class="dot" style="background:#c084fc"></span>React Hook Form + Zod</span>
+            <span class="tech-chip"><span class="dot" style="background:#38bdf8"></span>Axios</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="card accent-green" style="margin-bottom:16px">
+          <h3 style="color:var(--green);margin-bottom:12px">Infrastructure</h3>
+          <div class="stack-row">
+            <span class="tech-chip"><span class="dot" style="background:#2dd4bf"></span>Docker + Compose</span>
+            <span class="tech-chip"><span class="dot" style="background:#4285f4"></span>GCP Cloud Run</span>
+            <span class="tech-chip"><span class="dot" style="background:#34a853"></span>GCP Cloud SQL</span>
+            <span class="tech-chip"><span class="dot" style="background:#f59e0b"></span>Cloud Build CI/CD</span>
+          </div>
+        </div>
+        <div class="card" style="background:var(--surface)">
+          <h3 style="margin-bottom:10px">API Documentation</h3>
+          <p style="margin-bottom:8px">Auto-generated Swagger UI available at:</p>
+          <code style="color:var(--orange);font-size:14px">localhost:8000/docs</code>
+          <p class="mt8">ReDoc at: <code style="color:var(--orange)">localhost:8000/redoc</code></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════ SLIDE 4 – Repo Structure ══════════════ -->
+  <section class="slide" id="s4">
+    <h2 class="slide-title">Repo <span>Structure</span></h2>
+    <div class="divider"></div>
+    <div class="two-col full-w">
+      <div class="tree">
+        <div><span class="dir">DishDash/</span></div>
+        <div>├── <span class="dir">backend/</span></div>
+        <div>│   └── <span class="dir">app/</span></div>
+        <div>│       ├── <span class="file">main.py</span><span class="label">entry point + routers</span></div>
+        <div>│       ├── <span class="file">config.py</span><span class="label">env settings</span></div>
+        <div>│       ├── <span class="file">database.py</span><span class="label">async engine</span></div>
+        <div>│       ├── <span class="dir">models/</span><span class="label">SQLAlchemy ORM</span></div>
+        <div>│       ├── <span class="dir">schemas/</span><span class="label">Pydantic v2</span></div>
+        <div>│       ├── <span class="dir">routes/</span><span class="label">API handlers</span></div>
+        <div>│       └── <span class="dir">services/</span><span class="label">business logic</span></div>
+        <div>│   ├── <span class="dir">alembic/</span><span class="label">migrations</span></div>
+        <div>│   └── <span class="dir">tests/</span></div>
+        <div>├── <span class="dir">frontend/</span></div>
+        <div>│   └── <span class="dir">src/</span></div>
+        <div>│       ├── <span class="dir">components/</span><span class="label">UI components</span></div>
+        <div>│       ├── <span class="dir">pages/</span><span class="label">route pages</span></div>
+        <div>│       ├── <span class="dir">services/</span><span class="label">Axios API calls</span></div>
+        <div>│       ├── <span class="dir">context/</span><span class="label">AuthContext</span></div>
+        <div>│       └── <span class="dir">hooks/</span></div>
+        <div>├── <span class="dir">deployment/</span><span class="label">Cloud Build + IaC</span></div>
+        <div>└── <span class="file">docker-compose.yml</span></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div class="card accent-orange">
+          <h3>Layered Backend Architecture</h3>
+          <p><strong style="color:var(--text)">Routes</strong> validate HTTP — delegate to <strong style="color:var(--text)">Services</strong> for business logic — which query via <strong style="color:var(--text)">Models</strong>.</p>
+        </div>
+        <div class="card accent-blue">
+          <h3>Frontend Architecture</h3>
+          <p>Pages compose <strong style="color:var(--text)">Components</strong>, call <strong style="color:var(--text)">Services</strong> (Axios), consume <strong style="color:var(--text)">AuthContext</strong> for token management.</p>
+        </div>
+        <div class="card accent-green">
+          <h3>Database Migrations</h3>
+          <p><code style="color:var(--orange)">alembic upgrade head</code> applies versioned schema changes. Auto-generated from ORM model diffs.</p>
+        </div>
+        <div class="card accent-purple">
+          <h3>Dev Workflow</h3>
+          <p><code style="color:var(--orange)">docker-compose up</code> spins all 3 services (db, backend, frontend) with hot-reload.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════ SLIDE 5 – Database Schema ══════════════ -->
+  <section class="slide" id="s5">
+    <h2 class="slide-title">Database <span>Schema</span></h2>
+    <div class="divider"></div>
+    <div class="card-grid cols4 full-w">
+      <div class="card accent-orange">
+        <h3 style="color:var(--orange)">users</h3>
+        <ul>
+          <li>id (UUID PK)</li>
+          <li>email (unique)</li>
+          <li>password_hash</li>
+          <li>name</li>
+          <li>created_at</li>
+        </ul>
+      </div>
+      <div class="card accent-blue">
+        <h3 style="color:var(--blue)">recipes</h3>
+        <ul>
+          <li>id (UUID PK)</li>
+          <li>user_id (FK →users)</li>
+          <li>name, description</li>
+          <li>instructions</li>
+          <li>prep/cook_time_minutes</li>
+          <li>servings, category</li>
+        </ul>
+        <p class="mt8" style="color:var(--muted);font-size:12px">→ ingredients (cascade delete)</p>
+      </div>
+      <div class="card accent-green">
+        <h3 style="color:var(--green)">meal_plans</h3>
+        <ul>
+          <li>id (UUID PK)</li>
+          <li>user_id (FK →users)</li>
+          <li>name</li>
+          <li>week_start_date</li>
+        </ul>
+        <p class="mt8" style="color:var(--muted);font-size:12px">→ planned_meals (day_of_week + meal_type)</p>
+        <p style="color:var(--muted);font-size:12px">→ shopping_lists (1:1)</p>
+      </div>
+      <div class="card accent-purple">
+        <h3 style="color:var(--purple)">shopping_items</h3>
+        <ul>
+          <li>ingredient_name</li>
+          <li>quantity (Numeric)</li>
+          <li>unit (enum)</li>
+          <li>is_purchased</li>
+        </ul>
+        <p class="mt8" style="color:var(--muted);font-size:12px">Aggregated from all recipe ingredients in a plan</p>
+      </div>
+    </div>
+    <div class="card mt16 full-w" style="background:rgba(249,115,22,.07);border-color:var(--orange)">
+      <p style="font-size:13px"><strong style="color:var(--orange)">Enums:</strong>&nbsp;
+        <code style="color:var(--text)">RecipeCategory</code> (breakfast · lunch · dinner · snack · dessert · beverage) &nbsp;|&nbsp;
+        <code style="color:var(--text)">IngredientUnit</code> (cup · gram · ounce · teaspoon · …12 values) &nbsp;|&nbsp;
+        <code style="color:var(--text)">MealType</code> (breakfast · lunch · dinner · snack)
+      </p>
+    </div>
+  </section>
+
+  <!-- ══════════════ SLIDE 6 – User Flow Overview ══════════════ -->
+  <section class="slide" id="s6">
+    <h2 class="slide-title">User Flow: <span>Create a Recipe</span></h2>
+    <div class="divider"></div>
+    <div class="flow full-w">
+      <div class="flow-step highlight">
+        <div class="step-icon">💻</div>
+        <h4>React Frontend</h4>
+        <p>User fills RecipeForm (React Hook Form + Zod validation)<br><br>
+          <code style="color:var(--orange);font-size:11px">POST /api/v1/recipes</code><br>
+          <code style="color:var(--muted);font-size:11px">Authorization: Bearer &lt;JWT&gt;</code>
+        </p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-icon">🛡️</div>
+        <h4>FastAPI Middleware</h4>
+        <p>JWT decoded via <code style="color:var(--orange);font-size:11px">get_current_user</code> dependency<br><br>
+          Pydantic validates <code style="color:var(--orange);font-size:11px">RecipeCreate</code> schema — 422 if invalid
+        </p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-icon">⚙️</div>
+        <h4>Route Handler</h4>
+        <p><code style="color:var(--orange);font-size:11px">routes/recipes.py</code><br><br>
+          Calls <code style="color:var(--blue);font-size:11px">RecipeService.create_recipe(db, user_id, data)</code>
+        </p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-icon">🔧</div>
+        <h4>Service Layer</h4>
+        <p><code style="color:var(--orange);font-size:11px">services/recipe.py</code><br><br>
+          Constructs <code style="color:var(--blue);font-size:11px">Recipe</code> + <code style="color:var(--blue);font-size:11px">Ingredient</code> ORM objects<br><br>
+          <code style="color:var(--green);font-size:11px">db.add() → db.flush()</code>
+        </p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-icon">🗄️</div>
+        <h4>PostgreSQL</h4>
+        <p>Async <code style="color:var(--orange);font-size:11px">asyncpg</code> driver<br><br>
+          INSERT into <code style="color:var(--blue);font-size:11px">recipes</code> + <code style="color:var(--blue);font-size:11px">ingredients</code> tables (single transaction)
+        </p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step highlight">
+        <div class="step-icon">✅</div>
+        <h4>Response</h4>
+        <p><code style="color:var(--green);font-size:11px">201 Created</code><br><br>
+          <code style="color:var(--orange);font-size:11px">RecipeResponse</code> Pydantic model serialized to JSON<br><br>
+          Frontend updates recipe list
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════ SLIDE 7 – Code Walkthrough ══════════════ -->
+  <section class="slide" id="s7">
+    <h2 class="slide-title">Code <span>Walkthrough</span></h2>
+    <div class="divider"></div>
+    <div class="two-col wide full-w">
+      <div>
+        <p style="font-size:12px;color:var(--muted);margin-bottom:8px">
+          📄 <code style="color:var(--orange)">backend/app/routes/recipes.py</code>
+        </p>
+        <div class="code-panel">
+<span class="comment"># Route — validates, delegates to service</span>
+<span class="keyword">@router</span>.post(<span class="string">""</span>, response_model=<span class="type">RecipeResponse</span>,
+             status_code=<span class="op">201</span>)
+<span class="keyword">async def</span> <span class="fn">create_recipe</span>(
+    recipe_data: <span class="type">RecipeCreate</span>,   <span class="comment"># Pydantic validates</span>
+    current_user: <span class="type">CurrentUser</span>,    <span class="comment"># JWT auth dep</span>
+    db: <span class="type">DbSession</span>,
+) -> <span class="type">RecipeResponse</span>:
+    recipe = <span class="keyword">await</span> <span class="fn">RecipeService.create_recipe</span>(
+        db=db,
+        user_id=current_user.id,
+        recipe_data=recipe_data,
+    )
+    <span class="keyword">return</span> <span class="type">RecipeResponse</span>.model_validate(recipe)
+        </div>
+
+        <p style="font-size:12px;color:var(--muted);margin:12px 0 8px">
+          📄 <code style="color:var(--orange)">backend/app/services/recipe.py</code>
+        </p>
+        <div class="code-panel">
+<span class="keyword">async def</span> <span class="fn">create_recipe</span>(db, user_id, recipe_data):
+    recipe = <span class="type">Recipe</span>(
+        user_id=user_id, name=recipe_data.name,
+        category=recipe_data.category, <span class="comment">...more fields</span>
+    )
+    db.add(recipe)
+    <span class="keyword">await</span> db.flush()          <span class="comment"># gets recipe.id</span>
+
+    <span class="keyword">for</span> idx, ing <span class="keyword">in</span> <span class="fn">enumerate</span>(recipe_data.ingredients):
+        db.add(<span class="type">Ingredient</span>(
+            recipe_id=recipe.id, name=ing.name,
+            quantity=ing.quantity, unit=ing.unit,
+        ))
+    <span class="keyword">await</span> db.flush()
+    <span class="keyword">await</span> db.refresh(recipe)
+    <span class="keyword">return</span> recipe           <span class="comment"># with loaded ingredients</span>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div class="card accent-orange">
+          <h3>Dependency Injection</h3>
+          <p><code style="color:var(--orange)">CurrentUser</code> is a FastAPI Depends that decodes the JWT, queries the user from DB, and injects it. Zero boilerplate per route.</p>
+        </div>
+        <div class="card accent-blue">
+          <h3>Atomic Transaction</h3>
+          <p>Recipe + all ingredients are written in the same SQLAlchemy <code style="color:var(--blue)">AsyncSession</code>. A rollback on any error leaves the DB clean.</p>
+        </div>
+        <div class="card accent-green">
+          <h3>Pydantic v2 Validation</h3>
+          <p>FastAPI auto-returns <code style="color:var(--green)">422 Unprocessable Entity</code> with field-level errors if the request body fails schema validation.</p>
+        </div>
+        <div class="card accent-purple">
+          <h3>Ownership Scoping</h3>
+          <p>Every query filters by <code style="color:var(--purple)">user_id</code> — users can only read/modify their own data.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════ SLIDE 8 – Shopping List Flow ══════════════ -->
+  <section class="slide" id="s8">
+    <h2 class="slide-title">Feature Deep-Dive: <span>Shopping List Generation</span></h2>
+    <div class="divider"></div>
+    <div class="two-col full-w">
+      <div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:10px">
+          <code style="color:var(--orange)">POST /api/v1/meal-plans/{id}/shopping-list</code>
+        </p>
+        <div class="flow" style="flex-direction:column;gap:10px">
+          <div class="flow-step highlight" style="width:100%;text-align:left;padding:14px 18px">
+            <h4>① Load Meal Plan</h4>
+            <p>Eager-load: <code style="color:var(--blue);font-size:12px">meal_plan → planned_meals → recipe → ingredients</code></p>
+          </div>
+          <div class="flow-step" style="width:100%;text-align:left;padding:14px 18px">
+            <h4>② Aggregate Ingredients</h4>
+            <p>Group by <code style="color:var(--blue);font-size:12px">(name_lower, unit)</code> — sum quantities using <code style="color:var(--orange);font-size:12px">Decimal</code> arithmetic</p>
+          </div>
+          <div class="flow-step" style="width:100%;text-align:left;padding:14px 18px">
+            <h4>③ Pantry Detection</h4>
+            <p>Flags common spices/small-quantity items (salt, pepper, vanilla…) as <code style="color:var(--green);font-size:12px">is_pantry_item</code></p>
+          </div>
+          <div class="flow-step highlight" style="width:100%;text-align:left;padding:14px 18px">
+            <h4>④ Persist &amp; Return</h4>
+            <p>Creates <code style="color:var(--blue);font-size:12px">ShoppingList</code> + <code style="color:var(--blue);font-size:12px">ShoppingItem</code> rows; frontend renders checkable list</p>
+          </div>
+        </div>
+      </div>
+      <div>
+        <p style="font-size:12px;color:var(--muted);margin-bottom:8px">
+          📄 <code style="color:var(--orange)">services/shopping.py</code> — aggregation core
+        </p>
+        <div class="code-panel" style="font-size:12px">
+<span class="comment"># Aggregate across all meals</span>
+aggregated = defaultdict(<span class="fn">list</span>)
+
+<span class="keyword">for</span> planned_meal <span class="keyword">in</span> meal_plan.planned_meals:
+    <span class="keyword">for</span> ing <span class="keyword">in</span> planned_meal.recipe.ingredients:
+        key = (ing.name.lower(), ing.unit.value)
+        aggregated[key].append(ing.quantity)
+
+<span class="comment"># Create shopping items</span>
+<span class="keyword">for</span> (name, unit), qtys <span class="keyword">in</span> aggregated.items():
+    total = <span class="fn">sum</span>(qtys, Decimal(<span class="string">"0"</span>))
+    db.add(<span class="type">ShoppingItem</span>(
+        ingredient_name=name,
+        quantity=total, unit=unit,
+        is_purchased=<span class="keyword">False</span>,
+    ))
+        </div>
+        <div class="card accent-green mt16">
+          <h3>Example: "Week of Pasta"</h3>
+          <p>Spaghetti Bolognese × 2 + Pasta Primavera = <strong style="color:var(--text)">combined pasta quantity</strong> in one line item. Oregano gets flagged as pantry item.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════ SLIDE 9 – API Endpoints ══════════════ -->
+  <section class="slide" id="s9">
+    <h2 class="slide-title">API <span>Endpoints</span></h2>
+    <div class="divider"></div>
+    <div class="two-col full-w">
+      <div>
+        <div class="card" style="margin-bottom:14px">
+          <h3 style="color:var(--orange);margin-bottom:10px">Authentication</h3>
+          <table style="width:100%;font-size:13px;border-collapse:collapse">
+            <tr><td style="color:var(--green);padding:3px 0;width:50px">POST</td><td style="color:var(--muted)">/auth/register</td></tr>
+            <tr><td style="color:var(--green)">POST</td><td style="color:var(--muted)">/auth/login → JWT token</td></tr>
+            <tr><td style="color:var(--blue)">GET</td><td style="color:var(--muted)">/auth/me</td></tr>
+          </table>
+        </div>
+        <div class="card">
+          <h3 style="color:var(--blue);margin-bottom:10px">Recipes</h3>
+          <table style="width:100%;font-size:13px;border-collapse:collapse">
+            <tr><td style="color:var(--green);padding:3px 0;width:60px">POST</td><td style="color:var(--muted)">/recipes — create</td></tr>
+            <tr><td style="color:var(--blue)">GET</td><td style="color:var(--muted)">/recipes — list (paginated)</td></tr>
+            <tr><td style="color:var(--blue)">GET</td><td style="color:var(--muted)">/recipes/{id}</td></tr>
+            <tr><td style="color:var(--yellow,#fbbf24)">PUT</td><td style="color:var(--muted)">/recipes/{id} — update</td></tr>
+            <tr><td style="color:var(--red,#f87171)">DELETE</td><td style="color:var(--muted)">/recipes/{id}</td></tr>
+            <tr><td style="color:var(--blue)">GET</td><td style="color:var(--muted)">/recipes/categories</td></tr>
+          </table>
+        </div>
+      </div>
+      <div>
+        <div class="card" style="margin-bottom:14px">
+          <h3 style="color:var(--green);margin-bottom:10px">Meal Plans</h3>
+          <table style="width:100%;font-size:13px;border-collapse:collapse">
+            <tr><td style="color:var(--green);padding:3px 0;width:60px">POST</td><td style="color:var(--muted)">/meal-plans</td></tr>
+            <tr><td style="color:var(--blue)">GET</td><td style="color:var(--muted)">/meal-plans — list</td></tr>
+            <tr><td style="color:var(--blue)">GET</td><td style="color:var(--muted)">/meal-plans/{id}</td></tr>
+            <tr><td style="color:var(--green)">POST</td><td style="color:var(--muted)">/meal-plans/{id}/meals — add</td></tr>
+            <tr><td style="color:var(--red,#f87171)">DELETE</td><td style="color:var(--muted)">/planned-meals/{id}</td></tr>
+          </table>
+        </div>
+        <div class="card">
+          <h3 style="color:var(--purple);margin-bottom:10px">Shopping Lists</h3>
+          <table style="width:100%;font-size:13px;border-collapse:collapse">
+            <tr><td style="color:var(--green);padding:3px 0;width:60px">POST</td><td style="color:var(--muted)">/meal-plans/{id}/shopping-list</td></tr>
+            <tr><td style="color:var(--blue)">GET</td><td style="color:var(--muted)">/shopping-lists/{id}</td></tr>
+            <tr><td style="color:#fbbf24">PATCH</td><td style="color:var(--muted)">/shopping-items/{id} — toggle</td></tr>
+            <tr><td style="color:#f87171">DELETE</td><td style="color:var(--muted)">/shopping-items/{id}</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════ SLIDE 10 – Deployment ══════════════ -->
+  <section class="slide" id="s10">
+    <h2 class="slide-title">Deployment <span>Architecture</span></h2>
+    <div class="divider"></div>
+    <div class="two-col full-w">
+      <div>
+        <div class="flow" style="flex-direction:column;gap:12px">
+          <div class="flow-step" style="width:100%;text-align:left;padding:14px 18px">
+            <h4>☁️ GCP Cloud Run — Backend</h4>
+            <p>Serverless containers; scales to zero. Multi-stage Docker build (dev/prod layers).</p>
+          </div>
+          <div class="flow-step" style="width:100%;text-align:left;padding:14px 18px">
+            <h4>🗄️ GCP Cloud SQL — PostgreSQL 15</h4>
+            <p>Managed DB; backend connects via Unix socket in Cloud Run. Credentials in Secret Manager.</p>
+          </div>
+          <div class="flow-step" style="width:100%;text-align:left;padding:14px 18px">
+            <h4>🌐 Cloud Run / Firebase Hosting — Frontend</h4>
+            <p>React build served as static files. <code style="color:var(--orange);font-size:12px">VITE_API_URL</code> points to backend Cloud Run URL.</p>
+          </div>
+          <div class="flow-step highlight" style="width:100%;text-align:left;padding:14px 18px">
+            <h4>🔄 Cloud Build CI/CD</h4>
+            <p>Push to <code style="color:var(--green);font-size:12px">main</code> → build Docker images → push to Artifact Registry → deploy to Cloud Run.</p>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div class="card accent-green">
+          <h3>Local Dev</h3>
+          <div class="code-panel mt8" style="font-size:13px">
+docker-compose up --build
+<span class="comment"># → postgres:5432</span>
+<span class="comment"># → backend:8000</span>
+<span class="comment"># → frontend:5173</span>
+          </div>
+        </div>
+        <div class="card accent-orange">
+          <h3>Migrations</h3>
+          <div class="code-panel mt8" style="font-size:13px">
+alembic upgrade head
+alembic revision --autogenerate \
+  -m <span class="string">"add column"</span>
+          </div>
+        </div>
+        <div class="card accent-blue">
+          <h3>Seed Data</h3>
+          <div class="code-panel mt8" style="font-size:13px">
+python -m scripts.seed_data
+<span class="comment"># Populates demo recipes</span>
+<span class="comment"># and meal plans</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════ SLIDE 11 – End ══════════════ -->
+  <section class="slide end-slide" id="s11">
+    <div class="logo-ring">🍽️</div>
+    <h2><span>Dish</span>Dash — Thanks!</h2>
+    <p style="font-size:20px;color:var(--muted);margin-top:10px">
+      Recipe · Meal Planning · Shopping Lists
+    </p>
+    <div class="url-row">
+      <span class="url-chip">github.com/StuartCohen22/DishDash</span>
+      <span class="url-chip">localhost:8000/docs — Swagger UI</span>
+      <span class="url-chip">localhost:5173 — Frontend</span>
+    </div>
+    <div class="badge-row" style="margin-top:28px">
+      <span class="badge green">FastAPI + asyncpg</span>
+      <span class="badge blue">React 18 + TypeScript</span>
+      <span class="badge orange">JWT Auth</span>
+      <span class="badge purple">GCP Cloud Run</span>
+    </div>
+    <p style="margin-top:32px;color:var(--muted);font-size:15px">Questions?</p>
+  </section>
+
+</div><!-- #deck -->
+
+<!-- ─── Navigation ─────────────────────────────────────────── -->
+<div id="nav">
+  <button id="btn-prev" disabled>&#8592;</button>
+  <span id="slide-num">1 / 11</span>
+  <button id="btn-next">&#8594;</button>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total   = slides.length;
+  let cur = 0;
+
+  const prev   = document.getElementById('btn-prev');
+  const next   = document.getElementById('btn-next');
+  const num    = document.getElementById('slide-num');
+  const prog   = document.getElementById('progress');
+
+  function goTo(n) {
+    slides[cur].classList.remove('active');
+    slides[cur].classList.add('out');
+    setTimeout(() => slides[cur === n ? n : cur].classList.remove('out'), 450);
+
+    cur = n;
+    slides[cur].classList.add('active');
+
+    num.textContent = `${cur + 1} / ${total}`;
+    prev.disabled = cur === 0;
+    next.disabled = cur === total - 1;
+    prog.style.width = `${((cur + 1) / total) * 100}%`;
+  }
+
+  prev.addEventListener('click', () => cur > 0 && goTo(cur - 1));
+  next.addEventListener('click', () => cur < total - 1 && goTo(cur + 1));
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault(); cur < total - 1 && goTo(cur + 1);
+    }
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault(); cur > 0 && goTo(cur - 1);
+    }
+  });
+
+  // touch swipe
+  let tx = null;
+  document.addEventListener('touchstart', e => { tx = e.touches[0].clientX; });
+  document.addEventListener('touchend', e => {
+    if (tx === null) return;
+    const dx = tx - e.changedTouches[0].clientX;
+    if (Math.abs(dx) > 50) dx > 0 ? (cur < total - 1 && goTo(cur + 1)) : (cur > 0 && goTo(cur - 1));
+    tx = null;
+  });
+
+  // init progress bar
+  prog.style.width = `${(1 / total) * 100}%`;
+</script>
+</body>
+</html>
