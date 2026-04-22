@@ -27,8 +27,7 @@ jobs:
 
       - name: Submit Cloud Build
         run: |
-          gcloud builds submit \
+          gcloud builds submit . \
             --config=deployment/cloudbuild.yaml \
             --project=${{ secrets.GCP_PROJECT_ID }} \
-            --substitutions=_REGION=us-central1,_BACKEND_URL=${{ secrets.BACKEND_URL }},_CLOUD_SQL_CONNECTION=${{ secrets.CLOUD_SQL_CONNECTION }} \
-            --no-source
+            --substitutions=COMMIT_SHA=${{ github.sha }},_REGION=us-central1,_BACKEND_URL=${{ secrets.BACKEND_URL }},_CLOUD_SQL_CONNECTION=${{ secrets.CLOUD_SQL_CONNECTION }}
