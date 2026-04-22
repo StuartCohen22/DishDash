@@ -2,6 +2,8 @@ steps:
   # Build backend Docker image
   - name: 'gcr.io/cloud-builders/docker'
     id: 'build-backend'
+    env:
+      - 'DOCKER_BUILDKIT=1'
     args:
       - 'build'
       - '-t'
@@ -17,6 +19,8 @@ steps:
   # Build frontend Docker image
   - name: 'gcr.io/cloud-builders/docker'
     id: 'build-frontend'
+    env:
+      - 'DOCKER_BUILDKIT=1'
     args:
       - 'build'
       - '-t'
