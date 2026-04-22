@@ -70,7 +70,7 @@ steps:
       - '--platform=managed'
       - '--allow-unauthenticated'
       - '--add-cloudsql-instances=${_CLOUD_SQL_CONNECTION}'
-      - '--set-env-vars=ENVIRONMENT=production,DEBUG=false'
+      - '--set-env-vars=ENVIRONMENT=production,DEBUG=false,CORS_ORIGINS=https://dishdash-frontend-1052002692583.us-central1.run.app'
       - '--set-secrets=JWT_SECRET_KEY=jwt-secret:latest,DATABASE_URL=database-url:latest'
       - '--memory=512Mi'
       - '--cpu=1'
