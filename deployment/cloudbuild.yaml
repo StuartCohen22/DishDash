@@ -57,6 +57,26 @@ steps:
     args: ['push', 'gcr.io/$PROJECT_ID/dishdash-frontend:latest']
     waitFor: ['build-frontend']
 
+  # Run database migrations before deploying the new backend version
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'run-migrations'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'jobs'
+      - 'deploy'
+      - 'run-migrations'
+      - '--image=gcr.io/$PROJECT_ID/dishdash-backend:$COMMIT_SHA'
+      - '--region=${_REGION}'
+      - '--set-cloudsql-instances=${_CLOUD_SQL_CONNECTION}'
+      - '--set-secrets=DATABASE_URL=database-url:latest'
+      - '--set-env-vars=PYTHONPATH=/app'
+      - '--command=alembic'
+      - '--args=upgrade,head'
+      - '--execute-now'
+      - '--wait'
+    waitFor: ['push-backend']
+
   # Deploy backend to Cloud Run
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: 'deploy-backend'
@@ -76,7 +96,7 @@ steps:
       - '--cpu=1'
       - '--min-instances=0'
       - '--max-instances=10'
-    waitFor: ['push-backend']
+    waitFor: ['run-migrations']
 
   # Deploy frontend to Cloud Run
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
